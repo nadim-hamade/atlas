@@ -1,4 +1,5 @@
 import { planner } from "./planner";
+import { reader } from "./reader";
 import { scout } from "./scout";
 import type { EmitFn, PipelineResult, Stage, StageContext } from "./types";
 
@@ -23,7 +24,7 @@ async function runStage<In, Out>(
 
 /**
  * Run the pipeline for a question, emitting progress as it goes. Currently
- * wires planner -> scout; reader, writer, and verifier append to this chain as
+ * wires planner -> scout -> reader; writer and verifier append to this chain as
  * they are built. Throws if a stage fails (the error is emitted first).
  */
 export async function runPipeline(
@@ -40,6 +41,8 @@ export async function runPipeline(
 
   const { papers } = await runStage(scout, { question, subQueries }, ctx);
 
+  const { chunks } = await runStage(reader, { question, papers }, ctx);
+
   emit({ type: "pipeline:done" });
-  return { question, subQueries, papers };
+  return { question, subQueries, papers, chunks };
 }

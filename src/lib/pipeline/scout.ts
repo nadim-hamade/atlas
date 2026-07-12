@@ -1,6 +1,7 @@
 import { searchArxiv } from "@/lib/arxiv";
 import { embedTexts } from "@/lib/gemini";
 import type { ScoutInput, ScoutOutput, ScoutPaper, Stage, StageContext } from "./types";
+import { cosine } from "./vector";
 
 const RESULTS_PER_SUB_QUERY = 8;
 const FINAL_LIMIT = 12;
@@ -9,19 +10,6 @@ const ARXIV_DELAY_MS = 3000;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function cosine(a: number[], b: number[]): number {
-  let dot = 0;
-  let normA = 0;
-  let normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
-  }
-  const denom = Math.sqrt(normA) * Math.sqrt(normB);
-  return denom === 0 ? 0 : dot / denom;
 }
 
 /**

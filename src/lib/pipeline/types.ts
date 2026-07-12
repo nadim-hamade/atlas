@@ -35,6 +35,28 @@ export interface ScoutOutput {
   papers: ScoutPaper[];
 }
 
+/** A citation-sized slice of a paper's abstract — the unit a claim will cite. */
+export interface Chunk {
+  /** stable id pointing at this exact chunk, e.g. "2503.16581v1#c2" */
+  id: string;
+  paperId: string;
+  paperTitle: string;
+  /** position of the chunk within its paper's abstract */
+  index: number;
+  text: string;
+  /** 0..1 relevance to the question; higher first. 0 when embeddings are unavailable. */
+  relevance: number;
+}
+
+export interface ReaderInput {
+  question: string;
+  papers: ScoutPaper[];
+}
+
+export interface ReaderOutput {
+  chunks: Chunk[];
+}
+
 /**
  * Progress events emitted as the pipeline runs. The shape maps directly onto
  * SSE messages once the streaming route exists, so the UI can watch each stage.
@@ -46,6 +68,7 @@ export type PipelineEvent =
   | { type: "stage:done"; stage: StageName; durationMs: number }
   | { type: "planner:result"; subQueries: SubQuery[] }
   | { type: "scout:result"; papers: ScoutPaper[] }
+  | { type: "reader:result"; chunks: Chunk[] }
   | { type: "pipeline:done" }
   | { type: "pipeline:error"; stage: StageName | null; message: string };
 
@@ -69,4 +92,5 @@ export interface PipelineResult {
   question: string;
   subQueries: SubQuery[];
   papers: ScoutPaper[];
+  chunks: Chunk[];
 }
