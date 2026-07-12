@@ -9,7 +9,8 @@ import type { Schema } from "@google/genai";
  */
 export const MODELS = {
   fast: ["gemini-3.1-flash-lite", "gemini-flash-latest"],
-  strong: ["gemini-3.5-flash", "gemini-3.1-pro-preview", "gemini-pro-latest"],
+  // The fast tier as last resort: degraded quality beats a dead pipeline.
+  strong: ["gemini-3.5-flash", "gemini-3.1-pro-preview", "gemini-pro-latest", "gemini-3.1-flash-lite"],
 } as const;
 
 /** Embedding models, best-effort. Callers must tolerate a null result. */

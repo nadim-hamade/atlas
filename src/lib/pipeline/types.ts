@@ -79,6 +79,28 @@ export interface WriterOutput {
   answer: Answer;
 }
 
+/** The verifier's judgement of one claim against its cited chunks. */
+export type Verdict = "supported" | "partial" | "unsupported";
+
+export interface VerifiedClaim extends Claim {
+  verdict: Verdict;
+  /** one short sentence explaining the verdict */
+  note: string;
+}
+
+export interface VerifiedAnswer {
+  claims: VerifiedClaim[];
+}
+
+export interface VerifierInput {
+  answer: Answer;
+  chunks: Chunk[];
+}
+
+export interface VerifierOutput {
+  verifiedAnswer: VerifiedAnswer;
+}
+
 /**
  * Progress events emitted as the pipeline runs. The shape maps directly onto
  * SSE messages once the streaming route exists, so the UI can watch each stage.
@@ -92,6 +114,7 @@ export type PipelineEvent =
   | { type: "scout:result"; papers: ScoutPaper[] }
   | { type: "reader:result"; chunks: Chunk[] }
   | { type: "writer:result"; answer: Answer }
+  | { type: "verifier:result"; verifiedAnswer: VerifiedAnswer }
   | { type: "pipeline:done" }
   | { type: "pipeline:error"; stage: StageName | null; message: string };
 
@@ -117,4 +140,5 @@ export interface PipelineResult {
   papers: ScoutPaper[];
   chunks: Chunk[];
   answer: Answer;
+  verifiedAnswer: VerifiedAnswer;
 }
