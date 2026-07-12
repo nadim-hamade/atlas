@@ -8,8 +8,19 @@ const FINAL_LIMIT = 12;
 /** arXiv asks for >= 3s between requests; be a polite citizen. */
 const ARXIV_DELAY_MS = 3000;
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+/** Resolves early on abort so the loop can notice and bail out. */
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        resolve();
+      },
+      { once: true },
+    );
+  });
 }
 
 /**
@@ -56,10 +67,18 @@ export const scout: Stage<ScoutInput, ScoutOutput> = {
     const byId = new Map<string, ScoutPaper>();
 
     for (let i = 0; i < subQueries.length; i++) {
+      if (ctx.signal?.aborted) throw new Error("run aborted");
       const sq = subQueries[i];
       ctx.emit({ type: "stage:progress", stage: "scout", message: `searching: ${sq.text}` });
 
-      const results = await searchArxiv(sq.text, { maxResults: RESULTS_PER_SUB_QUERY });
+      // One failed search shouldn't kill the run — skip it and keep going.
+      let results: Awaited<ReturnType<typeof searchArxiv>> = [];
+      try {
+        results = await searchArxiv(sq.text, { maxResults: RESULTS_PER_SUB_QUERY });
+      } catch (err) {
+        console.error(`[scout] search failed for "${sq.text}":`, err);
+        ctx.emit({ type: "stage:progress", stage: "scout", message: "one search failed — skipping it" });
+      }
       for (const paper of results) {
         const existing = byId.get(paper.id);
         if (existing) {
@@ -71,7 +90,12 @@ export const scout: Stage<ScoutInput, ScoutOutput> = {
         }
       }
 
-      if (i < subQueries.length - 1) await sleep(ARXIV_DELAY_MS);
+      if (i < subQueries.length - 1) await sleep(ARXIV_DELAY_MS, ctx.signal);
+    }
+
+    if (ctx.signal?.aborted) throw new Error("run aborted");
+    if (byId.size === 0) {
+      throw new Error("no papers retrieved for any sub-query");
     }
 
     const deduped = [...byId.values()];

@@ -4,12 +4,21 @@ import { scout } from "./scout";
 import { writer } from "./writer";
 import type { EmitFn, PipelineResult, Stage, StageContext } from "./types";
 
-/** Wrap a stage with start/done events and stage-scoped error reporting. */
+function throwIfAborted(ctx: StageContext): void {
+  if (ctx.signal?.aborted) throw new Error("run aborted");
+}
+
+/**
+ * Wrap a stage with start/done events and stage-scoped error reporting. Raw
+ * errors are logged server-side only; clients get a generic message so
+ * internals (model names, quotas, upstream failures) never leak.
+ */
 async function runStage<In, Out>(
   stage: Stage<In, Out>,
   input: In,
   ctx: StageContext,
 ): Promise<Out> {
+  throwIfAborted(ctx);
   ctx.emit({ type: "stage:start", stage: stage.name });
   const startedAt = Date.now();
   try {
@@ -17,8 +26,14 @@ async function runStage<In, Out>(
     ctx.emit({ type: "stage:done", stage: stage.name, durationMs: Date.now() - startedAt });
     return output;
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    ctx.emit({ type: "pipeline:error", stage: stage.name, message });
+    // An aborted run has no listener anymore — skip both logging noise and emit.
+    if (ctx.signal?.aborted) throw err;
+    console.error(`[pipeline] ${stage.name} stage failed:`, err);
+    ctx.emit({
+      type: "pipeline:error",
+      stage: stage.name,
+      message: `the ${stage.name} stage failed — please try again`,
+    });
     throw err;
   }
 }
@@ -26,7 +41,8 @@ async function runStage<In, Out>(
 /**
  * Run the pipeline for a question, emitting progress as it goes. Currently
  * wires planner -> scout -> reader -> writer; the verifier appends to this
- * chain next. Throws if a stage fails (the error is emitted first).
+ * chain next. Throws if a stage fails (the error is emitted first) or the
+ * signal aborts.
  */
 export async function runPipeline(
   question: string,
