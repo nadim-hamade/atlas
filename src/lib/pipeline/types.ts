@@ -57,6 +57,28 @@ export interface ReaderOutput {
   chunks: Chunk[];
 }
 
+/** One statement in the answer, tied to the chunk(s) that support it. */
+export interface Claim {
+  id: string;
+  text: string;
+  /** chunk ids (from the reader) that support this claim; empty = uncited/ungrounded */
+  citations: string[];
+}
+
+/** The survey-style answer: an ordered list of individually cited claims. */
+export interface Answer {
+  claims: Claim[];
+}
+
+export interface WriterInput {
+  question: string;
+  chunks: Chunk[];
+}
+
+export interface WriterOutput {
+  answer: Answer;
+}
+
 /**
  * Progress events emitted as the pipeline runs. The shape maps directly onto
  * SSE messages once the streaming route exists, so the UI can watch each stage.
@@ -69,6 +91,7 @@ export type PipelineEvent =
   | { type: "planner:result"; subQueries: SubQuery[] }
   | { type: "scout:result"; papers: ScoutPaper[] }
   | { type: "reader:result"; chunks: Chunk[] }
+  | { type: "writer:result"; answer: Answer }
   | { type: "pipeline:done" }
   | { type: "pipeline:error"; stage: StageName | null; message: string };
 
@@ -93,4 +116,5 @@ export interface PipelineResult {
   subQueries: SubQuery[];
   papers: ScoutPaper[];
   chunks: Chunk[];
+  answer: Answer;
 }
