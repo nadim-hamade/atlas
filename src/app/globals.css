@@ -1,26 +1,198 @@
 @import "tailwindcss";
 
+/*
+  Atlas — strict monochrome on true black. Hierarchy comes from one white ink at
+  varying opacity, hairlines, space, and motion. No hue, no images.
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #000000;
+  --surface-1: #0a0a0a;
+  --surface-2: #141414;
+
+  --ink: #ffffff;
+  --ink-body: rgba(255, 255, 255, 0.84);
+  --ink-muted: rgba(255, 255, 255, 0.6);
+  --ink-faint: rgba(255, 255, 255, 0.46);
+  --ink-ghost: rgba(255, 255, 255, 0.3);
+
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --focus: #ffffff;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --z-base: 0;
+  --z-drawer-backdrop: 20;
+  --z-drawer: 30;
+  --z-tooltip: 40;
+
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-body: var(--ink-body);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-ink-ghost: var(--ink-ghost);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--line);
+}
+
+html {
+  background: var(--bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink-body);
+  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* Thin, monochrome scrollbars so panels don't reintroduce chrome color. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.font-mono {
+  font-family: var(--font-mono), ui-monospace, "SFMono-Regular", monospace;
+  font-feature-settings: "tnum" 1;
+}
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+/* ---- Motion -------------------------------------------------------------- */
+/*
+  Reveal keyframes run once on mount. Content's resting state is fully visible;
+  these enhance an already-readable default rather than gating visibility, and
+  they are switched off entirely under reduced-motion below.
+*/
+
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The intro line: each word rises, sharpens, and fades in with an expo ease. */
+.intro-word {
+  display: inline-block;
+  white-space: pre;
+  animation: word-in 0.7s var(--ease-expo) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+
+/* Stateful entrance for streamed rows and revealed claims. */
+.rise-in {
+  animation: rise-in 0.5s var(--ease-expo) both;
+}
+.fade-in {
+  animation: fade-in 0.4s var(--ease-smooth) both;
+}
+
+/* The one looping motion: a blinking caret on the active pipeline stage. */
+.caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.5ch;
+  height: 1em;
+  margin-left: 0.15ch;
+  background: var(--ink);
+  vertical-align: -0.12em;
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-word,
+  .rise-in,
+  .fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .caret::after {
+    animation: none;
+    opacity: 1;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
 }
