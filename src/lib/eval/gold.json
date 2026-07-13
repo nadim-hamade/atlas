@@ -1,0 +1,113 @@
+[
+  {
+    "id": "kv-cache-latency",
+    "question": "How does KV-cache compression affect LLM inference latency?",
+    "relevantPaperIds": ["2504.09936", "2405.12532", "2508.06297", "2506.05345", "2403.05527"],
+    "titles": [
+      "KeepKV: Periodic Lossless KV Cache Compression",
+      "PyramidInfer: Pyramid KV Cache Compression",
+      "KV Cache Compression for Inference Efficiency: A Review",
+      "Inference-Time Hyper-Scaling with KV Cache Compression",
+      "GEAR: KV Cache Compression Recipe for Near-Lossless Inference"
+    ]
+  },
+  {
+    "id": "rag-hallucination",
+    "question": "What approaches reduce hallucination in retrieval-augmented generation?",
+    "relevantPaperIds": ["2404.08189", "2510.22344", "2309.15217"],
+    "titles": [
+      "Reducing hallucination in structured outputs via RAG",
+      "FAIR-RAG: Faithful Adaptive Iterative Refinement for RAG",
+      "Ragas: Automated Evaluation of RAG (faithfulness)"
+    ]
+  },
+  {
+    "id": "long-context",
+    "question": "What methods extend the context length of transformer language models?",
+    "relevantPaperIds": ["2402.10171", "2502.17129", "2603.20586"],
+    "titles": [
+      "Data Engineering for Scaling Language Models to 128K Context",
+      "Thus Spake Long-Context Large Language Model",
+      "MKA: Memory-Keyed Attention for Efficient Long-Context Reasoning"
+    ]
+  },
+  {
+    "id": "speculative-decoding",
+    "question": "How does speculative decoding accelerate LLM inference?",
+    "relevantPaperIds": ["2203.16487", "2308.04623", "2410.06916", "2412.00061", "2510.13161"],
+    "titles": [
+      "Speculative Decoding: Exploiting Speculative Execution",
+      "Accelerating LLM Inference with Staged Speculative Decoding",
+      "SWIFT: On-the-Fly Self-Speculative Decoding",
+      "Speculative Decoding with CTC-based Draft Model",
+      "Mirror Speculative Decoding"
+    ]
+  },
+  {
+    "id": "peft-lora",
+    "question": "What parameter-efficient methods fine-tune large language models with LoRA?",
+    "relevantPaperIds": ["2410.20777", "2403.08822", "2501.19389"],
+    "titles": [
+      "KD-LoRA: Efficient Fine-Tuning with LoRA and Distillation",
+      "LoRA-SP: Streamlined Partial Parameter Adaptation",
+      "Federated Sketching LoRA for collaborative fine-tuning of LLMs"
+    ]
+  },
+  {
+    "id": "rlhf-alignment",
+    "question": "How is reinforcement learning from human feedback used to align language models?",
+    "relevantPaperIds": ["2304.05302", "2509.16679", "2506.08266", "2406.15890"],
+    "titles": [
+      "RRHF: Rank Responses to Align LMs with Human Feedback",
+      "RL Meets LLMs: A Survey across the LLM Lifecycle",
+      "RLHF with High-Confidence Safety Constraints",
+      "Language Alignment via Nash-learning and Adaptive feedback"
+    ]
+  },
+  {
+    "id": "mixture-of-experts",
+    "question": "How do mixture-of-experts architectures scale language models efficiently?",
+    "relevantPaperIds": ["2402.14800", "2410.17954", "2502.03009", "2112.10684"],
+    "titles": [
+      "Efficient Expert Pruning and Skipping for MoE LLMs",
+      "ExpertFlow: Efficient Mixture-of-Experts Inference",
+      "Scaling Laws for Upcycling Mixture-of-Experts LMs",
+      "Efficient Large Scale Language Modeling with MoE"
+    ]
+  },
+  {
+    "id": "quantization-memory",
+    "question": "How does quantization reduce the memory footprint of large language models?",
+    "relevantPaperIds": ["2402.12065", "2310.00034", "2410.05265", "2508.03332"],
+    "titles": [
+      "WKVQuant: Quantizing Weight and Key/Value Cache for LLMs",
+      "PB-LLM: Partially Binarized Large Language Models",
+      "PrefixQuant: Eliminating Outliers for LLM Quantization",
+      "Layer-wise Post-Training Quantization for Small LMs"
+    ]
+  },
+  {
+    "id": "prompt-injection",
+    "question": "What methods defend against prompt-injection attacks on LLMs?",
+    "relevantPaperIds": ["2502.13141", "2403.04957", "2410.05451", "2402.06363", "2310.12815"],
+    "titles": [
+      "UniGuardian: Unified Defense for Prompt Injection",
+      "Automatic and Universal Prompt Injection Attacks",
+      "SecAlign: Defending Against Prompt Injection",
+      "StruQ: Defending Against Prompt Injection with Structured Queries",
+      "Formalizing and Benchmarking Prompt Injection Attacks and Defenses"
+    ]
+  },
+  {
+    "id": "chain-of-thought",
+    "question": "How does chain-of-thought prompting improve reasoning in language models?",
+    "relevantPaperIds": ["2201.11903", "2503.09567", "2410.03595", "2404.14812", "2305.17306"],
+    "titles": [
+      "Chain-of-Thought Prompting Elicits Reasoning",
+      "Survey of Long Chain-of-Thought for Reasoning LLMs",
+      "Understanding Reasoning in CoT from the Hopfieldian View",
+      "Enhancing CoT Prompting via Reasoning Patterns",
+      "Chain-of-Thought Hub"
+    ]
+  }
+]

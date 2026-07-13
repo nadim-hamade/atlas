@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "curate": "node scripts/curate-arxiv.mjs",
+    "eval": "node scripts/run-eval.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.11.0",
